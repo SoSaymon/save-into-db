@@ -1,0 +1,19 @@
+body {
+    background-color: #f8f8f8; /* Wybierz dowolny kolor tła */
+}
+h1, button {
+    margin: 10px 0; /* Dostosuj margines według preferencji */
+}
+button {
+    padding: 10px;
+    background-color: #4caf50; /* Kolor zielony */
+    color: white; /* Kolor tekstu biały */
+    border: none;
+    cursor: pointer;
+}
+table {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Dodaj cień */
+}
+.good {
+    background: lightgreen; /* Kolor tła dla elementów o klasie 'good' */
+}

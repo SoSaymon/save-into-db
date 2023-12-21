@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<form enctype="multipart/form-data">
+  <input type="file" id="fileInput" accept=".html">
+  <input type="submit" value="Reset">
+</form>
+<button onclick="sendToDatabase()">Wyślij do bazy danych</button>
+<table id="table"></table>
+<script>
+  document.getElementById('fileInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) {
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const contents = e.target.result;
+      loadData(contents);
+    };
+    reader.readAsText(file);
+  });
+
+  function sendToDatabase()
+  {
+    this.questions.forEach(question => {
+      fetch('http://localhost/scrap/send.php?question=' + question);
+    });
+  }
+
+  function loadData(data)
+  {
+
+    this.questions = data.split('<div class="trescE">');
+
+    const table = document.getElementById("table");
+
+    for (let i = 1; i < this.questions.length; i++) {
+      const newTr = document.createElement("tr");
+      const newTd = document.createElement("td");
+      const newLp = document.createElement("td");
+
+      newLp.innerText = i + ".";
+
+      const question = this.questions[i].split('</div><div class="rezultat');
+
+      const withoutNumber = question[0].substring(
+              question[0].indexOf(". ") + 1
+      );
+
+      const questionOnly = withoutNumber.split("</div>")[0];
+
+      const img = withoutNumber.split('img class="img-responsive" src="../');
+
+      newTd.innerHTML = questionOnly + "</br>";
+
+      if (img[1]) {
+        const imgSrc =
+                "https://egzamin-informatyk.pl/" + img[1].split('" alt=')[0];
+
+        const newImg = document.createElement("img");
+        newImg.src = imgSrc;
+
+        newTd.appendChild(newImg);
+      }
+
+      const answers = question[1].split('class="odp');
+
+      const newList = document.createElement("ol");
+
+      newList.type = "A";
+
+      for (let j = 1; j < answers.length; j++) {
+        const ans = document.createElement("li");
+
+        const how = answers[j].split('"')[0];
+
+        if (how === "good") {
+          ans.classList.add("good");
+        }
+
+        ans.innerHTML = answers[j].split("</strong>")[1];
+
+        newList.appendChild(ans);
+      }
+
+      newTd.appendChild(newList);
+
+      newTr.appendChild(newLp);
+      newTr.appendChild(newTd);
+
+      table.appendChild(newTr);
+    }
+  }
+</script>
+</body>
+</html>
